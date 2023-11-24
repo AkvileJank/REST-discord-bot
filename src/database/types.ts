@@ -1,35 +1,27 @@
-export interface Directors {
-  movieId: number
-  personId: number
+import type { ColumnType } from "kysely";
+
+export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
+  ? ColumnType<S, I | undefined, U>
+  : ColumnType<T, T | undefined, T>;
+
+export interface Messages {
+  username: string;
+  messageId: number;
+  sprintCode: string;
 }
 
-export interface Movies {
-  id: number | null
-  title: string
-  year: number | null
+export interface Sprints {
+  code: string;
+  title: string;
 }
 
-export interface People {
-  id: number | null
-  name: string
-  birth: number | null
-}
-
-export interface Ratings {
-  movieId: number
-  rating: number
-  votes: number
-}
-
-export interface Stars {
-  movieId: number
-  personId: number
+export interface Templates {
+  id: Generated<number>;
+  content: string;
 }
 
 export interface DB {
-  directors: Directors
-  movies: Movies
-  people: People
-  ratings: Ratings
-  stars: Stars
+  messages: Messages;
+  sprints: Sprints;
+  templates: Templates;
 }
