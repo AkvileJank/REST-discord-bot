@@ -6,7 +6,7 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
 
 export interface Messages {
   username: string;
-  messageId: number;
+  templateId: number;
   sprintCode: string;
 }
 
