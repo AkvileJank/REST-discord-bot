@@ -5,33 +5,31 @@ import buildRespository from './repository'
 import * as schema from './schema'
 import { StatusCodes } from 'http-status-codes'
 
-//import { NoIdProvided } from './errors'
-
 export default (db: Database) => {
-  const templates = buildRespository(db)
+  const sprints = buildRespository(db)
   const router = Router()
 
   router
     .route('/')
     .get(
       jsonRoute(async () => {
-        return await templates.getAll()
+        return await sprints.getAll()
       })
     )
     .post(
       jsonRoute(async (req) => {
         const body = schema.parseInsertable(req.body)
-        return templates.create(body)
+        return sprints.create(body)
       }, StatusCodes.CREATED)
     )
 
   router
-    .route('/:id')
+    .route('/:code')
     .patch(
       jsonRoute(async (req) => {
-        const id = schema.parseId(req.params.id)
-        const bodyPatch = schema.parseInsertable(req.body)
-        const record = await templates.update(id, bodyPatch)
+        const code = schema.parseCode(req.params.code)
+        const bodyPatch = schema.parseUpdatabale(req.body)
+        const record = await sprints.update(code, bodyPatch)
 
         // if (!record) {
         //   throw new notFound();
@@ -41,8 +39,8 @@ export default (db: Database) => {
     )
     .delete(
       jsonRoute(async (req) => {
-        const id = schema.parseId(req.params.id)
-        const record = await templates.delete(id)
+        const code = schema.parseCode(req.params.code)
+        const record = await sprints.delete(code)
         return record
       })
     )

@@ -11,7 +11,7 @@ export async function up(db: Kysely<SqliteDatabase>) {
   await db.schema
     .createTable('sprints')
     .ifNotExists()
-    .addColumn('code', 'text', (c) => c.notNull())
+    .addColumn('code', 'text', (c) => c.notNull().primaryKey())
     .addColumn('title', 'text', (c) => c.notNull())
     .execute()
 
@@ -19,8 +19,8 @@ export async function up(db: Kysely<SqliteDatabase>) {
     .createTable('messages')
     .ifNotExists()
     .addColumn('username', 'text', (c) => c.notNull())
-    .addColumn('messageId', 'integer', (c) =>
-      c.references('messages.id').onDelete('cascade').notNull()
+    .addColumn('templateId', 'integer', (c) =>
+      c.references('templates.id').onDelete('cascade').notNull()
     )
     .addColumn('sprintCode', 'text', (c) =>
       c.references('sprints.code').onDelete('cascade').notNull()
