@@ -4,6 +4,7 @@ import createApp from '@/app'
 import * as messages from './utils/loadMessages'
 import { loadSprints } from '@/modules/sprints/tests/utils/loadSprints'
 import { loadTemplates } from '@/modules/templates/tests/utils/loadTemplates'
+import { loadUsers } from './utils/loadUsers'
 
 const db = await createTestDatabase()
 const app = createApp(db)
@@ -11,6 +12,7 @@ const app = createApp(db)
 afterEach(async () => {
   await db.deleteFrom('templates').execute()
   await db.deleteFrom('sprints').execute()
+  await db.deleteFrom('users').execute()
   await db.deleteFrom('messages').execute()
 })
 
@@ -21,6 +23,7 @@ describe('GET', () => {
     it('should return messages for all learners', async () => {
       loadSprints(db)
       loadTemplates(db)
+      loadUsers(db)
       messages.loadMessages(db)
 
       const { body } = await supertest(app).get('/messages').expect(200)
@@ -52,6 +55,7 @@ describe('GET by username', () => {
   it('should return messages for specific learner', async () => {
     loadSprints(db)
     loadTemplates(db)
+    loadUsers(db)
     messages.loadMessages(db)
 
     const { body } = await supertest(app)
@@ -73,6 +77,7 @@ describe('GET by sprint', () => {
   it('should return messages for specific sprint', async () => {
     loadSprints(db)
     loadTemplates(db)
+    loadUsers(db)
     messages.loadMessages(db)
 
     const { body } = await supertest(app)
@@ -94,14 +99,16 @@ describe('POST', () => {
   it('should post a print new message', async () => {
     loadSprints(db)
     loadTemplates(db)
+    loadUsers(db)
 
     const messageTest = {
       sprintCode: 'WD-1.1',
       username: 'test1',
     }
-
-    const { body } = await supertest(app).post('/messages').send(messageTest)
-
-    console.log(body)
+    const { body } = await supertest(app)
+      .post('/messages')
+      .send(messageTest)
+      .expect(201)
+    expect(body).toEqual('Message fragment was prepared for discord')
   })
 })

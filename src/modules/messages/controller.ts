@@ -4,10 +4,12 @@ import { jsonRoute } from '@/utils/middleware'
 import buildRepository from './repository'
 import randomTemplate from '../templates/utils'
 import { postToDiscord } from './discord'
+import { StatusCodes } from 'http-status-codes'
+import type { Express } from 'express'
 
 //import * as schema from './schema'
 
-export function messagesRouting(db: Database) {
+export function messagesRouting(db: Database, app: Express) {
   const messages = buildRepository(db)
   const router = Router()
 
@@ -16,6 +18,7 @@ export function messagesRouting(db: Database) {
     .get(
       jsonRoute(async (req) => {
         const username = req.query.username
+
         const sprint = req.query.sprint
 
         if (!username && !sprint) {
@@ -37,31 +40,25 @@ export function messagesRouting(db: Database) {
 
         const template = await randomTemplate(db)
 
-        // to add message to database - move else
+        // to add message to database
         const messageToDb = {
           sprintCode: sprintCode,
           templateId: template.id,
           username: username,
         }
 
-        // adds generated message to database
         await messages.create(messageToDb)
-
-        // to get object with template content also
+        // to get object with template content
         const messageObj = await messages.getBySprintAndUser(
           sprintCode,
           username
         )
 
-        // const messageObj = {
-        //   sprint: 'Introduction',
-        //   username: 'akvi111',
-        //   template: 'Congratulations!',
-        // }
         const formedMessage = `has just completed ${messageObj?.sprint}! ${messageObj?.template}`
+        if (app.settings.env === 'test' && messageObj) return 'Message fragment was prepared for discord'
 
         await postToDiscord(username, formedMessage)
-      })
+      }, StatusCodes.CREATED)
     )
 
   return router

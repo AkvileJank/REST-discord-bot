@@ -3,6 +3,8 @@ import buildRepository from '../repository'
 import * as messages from './utils/loadMessages'
 import { loadSprints } from '@/modules/sprints/tests/utils/loadSprints'
 import { loadTemplates } from '@/modules/templates/tests/utils/loadTemplates'
+import { loadUsers } from './utils/loadUsers'
+
 
 const db = await createTestDatabase()
 const repository = buildRepository(db)
@@ -13,12 +15,14 @@ afterEach(async () => {
   await db.deleteFrom('sprints').execute()
   await db.deleteFrom('templates').execute()
   await db.deleteFrom('messages').execute()
+  await db.deleteFrom('users').execute()
 })
 
 describe('getAll', () => {
   it('should return all messages', async () => {
     loadSprints(db)
     loadTemplates(db)
+    loadUsers(db)
     messages.loadMessages(db)
 
     const foundMessages = await repository.getAll()
@@ -49,6 +53,7 @@ describe('getByUser', () => {
   it('should return messages for specific user', async () => {
     loadSprints(db)
     loadTemplates(db)
+    loadUsers(db)
     messages.loadMessages(db)
 
     const user = 'test1'
@@ -68,6 +73,7 @@ describe('getBySprint', () => {
   it('should return messages for specific sprint', async () => {
     loadSprints(db)
     loadTemplates(db)
+    loadUsers(db)
     messages.loadMessages(db)
 
     const sprint = 'WD-1.1'
@@ -87,6 +93,7 @@ describe('create', () => {
   it('should add new message to database', async () => {
     loadSprints(db)
     loadTemplates(db)
+    loadUsers(db)
     messages.loadMessages(db)
 
     const message = {

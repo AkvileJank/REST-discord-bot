@@ -31,7 +31,7 @@ export async function postToDiscord(user: string, message: string) {
   const guild = await client.guilds.fetch(SERVER_ID) // creates guild object(server)
   const members = await guild.members.fetch()
   const channel = await client.channels.fetch(CHANNEL_ID)
-  const member = await findUser(members, user)
+  const member = findUser(members, user)
   if (member) {
     postMessage(channel as TextChannel, member, message)
     postGIF(channel as TextChannel)

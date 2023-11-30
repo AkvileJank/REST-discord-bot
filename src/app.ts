@@ -16,7 +16,7 @@ export default function createApp(db: Database) {
   app.use(jsonErrorHandler)
   app.use('/templates', templatesRouting(db))
   app.use('/sprints', sprints(db))
-  app.use('/messages', messagesRouting(db))
+  app.use('/messages', messagesRouting(db, app))
 
   return app
 }
