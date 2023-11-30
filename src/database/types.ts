@@ -20,8 +20,13 @@ export interface Templates {
   content: string;
 }
 
+export interface Users {
+  user: string;
+}
+
 export interface DB {
   messages: Messages;
   sprints: Sprints;
   templates: Templates;
+  users: Users;
 }
