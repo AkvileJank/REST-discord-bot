@@ -3,6 +3,7 @@ import createTestDatabase from '@tests/utils/createTestDatabase'
 import createApp from '@/app'
 import * as templates from './utils/loadTemplates'
 
+
 const db = await createTestDatabase()
 const app = createApp(db)
 
@@ -69,3 +70,4 @@ describe('DELETE /:id', () => {
     })
   })
 })
+

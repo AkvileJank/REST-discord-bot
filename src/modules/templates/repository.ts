@@ -7,7 +7,7 @@ type RowWithoutId = Omit<Row, 'id'>
 type RowInsert = Insertable<RowWithoutId>
 
 export default (db: Database) => ({
-  getAll: async () => db.selectFrom('templates').selectAll().execute(),
+  getAll:async () => db.selectFrom('templates').selectAll().execute(),
 
   create: async (record: RowInsert) =>
     db

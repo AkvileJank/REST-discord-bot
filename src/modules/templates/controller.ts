@@ -1,14 +1,14 @@
 import { Router } from 'express'
 import type { Database } from '@/database'
 import { jsonRoute } from '@/utils/middleware'
-import buildRespository from './repository'
+import buildRepository from './repository'
 import * as schema from './schema'
 import { StatusCodes } from 'http-status-codes'
 
 //import { NoIdProvided } from './errors'
 
-export default (db: Database) => {
-  const templates = buildRespository(db)
+export function templatesRouting(db: Database) {
+  const templates = buildRepository(db)
   const router = Router()
 
   router

@@ -1,9 +1,9 @@
 import express from 'express'
 import jsonErrorHandler from './middleware/jsonErrors'
 import { type Database } from './database'
-import templates from './modules/templates/controller'
+import {templatesRouting} from './modules/templates/controller'
 import sprints from './modules/sprints/controller'
-import messages from './modules/messages/controller'
+import {messagesRouting} from './modules/messages/controller'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function createApp(db: Database) {
@@ -14,9 +14,9 @@ export default function createApp(db: Database) {
   // register your controllers here
 
   app.use(jsonErrorHandler)
-  app.use('/templates', templates(db))
+  app.use('/templates', templatesRouting(db))
   app.use('/sprints', sprints(db))
-  app.use('/messages', messages(db))
+  app.use('/messages', messagesRouting(db))
 
   return app
 }

@@ -91,5 +91,17 @@ describe('GET by sprint', () => {
 })
 
 describe('POST', () => {
-  it.todo('should post a new message on discord')
+  it('should post a print new message', async () => {
+    loadSprints(db)
+    loadTemplates(db)
+
+    const messageTest = {
+      sprintCode: 'WD-1.1',
+      username: 'test1',
+    }
+
+    const { body } = await supertest(app).post('/messages').send(messageTest)
+
+    console.log(body)
+  })
 })

@@ -82,3 +82,20 @@ describe('getBySprint', () => {
     ])
   })
 })
+
+describe('create', () => {
+  it('should add new message to database', async () => {
+    loadSprints(db)
+    loadTemplates(db)
+    messages.loadMessages(db)
+
+    const message = {
+      sprintCode: 'WD-1.1',
+      templateId: 1,
+      username: 'test1',
+    }
+
+    const addedMessage = await repository.create(message)
+    expect(addedMessage).toEqual(message)
+  })
+})
