@@ -19,6 +19,18 @@ describe('getAll', () => {
   })
 })
 
+describe('getByCode', () => {
+  it('should return sprint by code', async () => {
+    sprints.loadSprints(db)
+    const code = 'WD-1.1'
+    const foundSprint = await repository.getByCode(code)
+    expect(foundSprint).toEqual({
+      code: 'WD-1.1',
+      title: 'First sprint',
+    })
+  })
+})
+
 describe('create', () => {
   it('should add new sprint to database', async () => {
     const sprint = {

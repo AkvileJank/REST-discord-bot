@@ -19,6 +19,18 @@ describe('getAll', () => {
   })
 })
 
+describe('getById', () => {
+  it('should return template by id', async () => {
+    templates.loadTemplates(db)
+    const id = 1
+    const foundTemplate = await repository.getById(id)
+    expect(foundTemplate).toEqual({
+      id: 1,
+      content: 'Congratulations on your well-deserved success!',
+    })
+  })
+})
+
 describe('create', () => {
   it('should add new template to database', async () => {
     const template = {

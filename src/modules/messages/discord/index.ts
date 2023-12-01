@@ -1,41 +1,40 @@
-import { Channel } from 'diagnostics_channel'
+import NotFound from '@/utils/errors/NotFound'
 import {
   Client,
-  GatewayIntentBits,
-  Events,
   Collection,
   GuildMember,
   TextChannel,
+  Channel,
 } from 'discord.js'
 import { config } from 'dotenv'
 import fetch from 'node-fetch'
 
 config()
 
-const SERVER_ID = '1179042239016603658'
-const CHANNEL_ID = '1179042239624781926'
 const TENOR_URL = `
 https://g.tenor.com/v2/search?q=celebrate&key=${process.env.TENOR_KEY}&limit=1&random=true`
 
-const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
-})
-
-client.once(Events.ClientReady, async (readyClient) => {
-  console.log(`Ready! Logged in as ${readyClient.user.tag}`)
-})
-
-client.login(process.env.BOT_TOKEN)
-
-export async function postToDiscord(user: string, message: string) {
-  const guild = await client.guilds.fetch(SERVER_ID) // creates guild object(server)
+export async function setupDiscord(client: Client) {
+  const guild = await client.guilds.fetch(process.env.SERVER_ID as string) // creates guild object(server)
   const members = await guild.members.fetch()
-  const channel = await client.channels.fetch(CHANNEL_ID)
+  const channel = await client.channels.fetch(process.env.CHANNEL_ID as string)
+
+  return { members, channel }
+}
+
+export async function postToDiscord(
+  user: string,
+  message: string,
+  members: Collection<string, GuildMember>,
+  channel: Channel
+) {
   const member = findUser(members, user)
   if (member) {
     postMessage(channel as TextChannel, member, message)
     postGIF(channel as TextChannel)
+    return
   }
+  throw new NotFound(`User ${user} was not found in discord server`)
 }
 
 async function postMessage(
@@ -43,17 +42,27 @@ async function postMessage(
   member: GuildMember,
   message: string
 ) {
-  const fullMessage = `${member} ${message}`
-  await channel.send(fullMessage)
+  try {
+    const fullMessage = `${member} ${message}`
+    await channel.send(fullMessage)
+  } catch {
+    throw new Error('Message was not posted')
+  }
 }
 
 async function postGIF(channel: TextChannel) {
   const response = await fetch(TENOR_URL)
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch GIF: ${response.status}`)
+  }
+
   const jsonRes = await response.json()
+
   await channel.send(jsonRes.results[0].url)
 }
 
-function findUser(
+export function findUser(
   members: Collection<string, GuildMember>,
   user: string
 ) {

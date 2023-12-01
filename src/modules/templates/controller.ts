@@ -4,8 +4,7 @@ import { jsonRoute } from '@/utils/middleware'
 import buildRepository from './repository'
 import * as schema from './schema'
 import { StatusCodes } from 'http-status-codes'
-
-//import { NoIdProvided } from './errors'
+import { TemplateNotFound } from './errors'
 
 export function templatesRouting(db: Database) {
   const templates = buildRepository(db)
@@ -27,15 +26,25 @@ export function templatesRouting(db: Database) {
 
   router
     .route('/:id')
+    .get(
+      jsonRoute(async (req) => {
+        const id = schema.parseId(req.params.id)
+        const record = await templates.getById(id)
+        if (!record) {
+          throw new TemplateNotFound()
+        }
+        return record
+      })
+    )
     .patch(
       jsonRoute(async (req) => {
         const id = schema.parseId(req.params.id)
         const bodyPatch = schema.parseInsertable(req.body)
         const record = await templates.update(id, bodyPatch)
 
-        // if (!record) {
-        //   throw new notFound();
-        // }
+        if (!record) {
+          throw new TemplateNotFound()
+        }
         return record
       })
     )
@@ -43,6 +52,9 @@ export function templatesRouting(db: Database) {
       jsonRoute(async (req) => {
         const id = schema.parseId(req.params.id)
         const record = await templates.delete(id)
+        if (!record) {
+          throw new TemplateNotFound()
+        }
         return record
       })
     )

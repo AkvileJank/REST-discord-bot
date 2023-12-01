@@ -27,10 +27,10 @@ export async function up(db: Kysely<SqliteDatabase>) {
     .addColumn('username', 'text', (c) =>
       c.references('users.user').onDelete('cascade').notNull()
     )
-    .addColumn('templateId', 'integer', (c) =>
+    .addColumn('template_id', 'integer', (c) =>
       c.references('templates.id').onDelete('cascade').notNull()
     )
-    .addColumn('sprintCode', 'text', (c) =>
+    .addColumn('sprint_code', 'text', (c) =>
       c.references('sprints.code').onDelete('cascade').notNull()
     )
     .execute()

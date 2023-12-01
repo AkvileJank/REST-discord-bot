@@ -14,9 +14,6 @@ const jsonErrors: ErrorRequestHandler = (error, _req, res, _next) => {
 
   // display error in the console
   if (!isTest) {
-    // tests tend to produce errors on purpose and
-    // we don't want to pollute the console expected behavior
-    // eslint-disable-next-line no-console
     console.error(error)
   }
 

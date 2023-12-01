@@ -3,11 +3,12 @@ import type { Database } from '@/database'
 import { jsonRoute } from '@/utils/middleware'
 import buildRepository from './repository'
 import randomTemplate from '../templates/utils'
-import { postToDiscord } from './discord'
+import { postToDiscord, setupDiscord } from './discord'
 import { StatusCodes } from 'http-status-codes'
 import type { Express } from 'express'
-
-//import * as schema from './schema'
+import { validateReq } from './validation'
+import client from './discord/client'
+import NotFound from '@/utils/errors/NotFound'
 
 export function messagesRouting(db: Database, app: Express) {
   const messages = buildRepository(db)
@@ -35,11 +36,14 @@ export function messagesRouting(db: Database, app: Express) {
     )
     .post(
       jsonRoute(async (req) => {
-        const { sprintCode, username } = req.body
-        // need to verify if sprintCode and username exists in the database
+        const sprintCodeInput = req.body.sprintCode
+        const usernameInput = req.body.username
+
+        const result = await validateReq(sprintCodeInput, usernameInput, db)
+        const { username, sprintCode } = result
 
         const template = await randomTemplate(db)
-
+        if (!template) throw new NotFound('Message template could not be found')
         // to add message to database
         const messageToDb = {
           sprintCode: sprintCode,
@@ -47,17 +51,26 @@ export function messagesRouting(db: Database, app: Express) {
           username: username,
         }
 
-        await messages.create(messageToDb)
+        const messageAdded = await messages.create(messageToDb)
+        if (!messageAdded)
+          throw new Error('Message could not be added to database')
+
         // to get object with template content
         const messageObj = await messages.getBySprintAndUser(
           sprintCode,
           username
         )
+        if (!messageObj) throw new Error('Message could not be formed')
+        const formedMessage = `has just completed ${messageObj.sprint}! ${messageObj.template}`
 
-        const formedMessage = `has just completed ${messageObj?.sprint}! ${messageObj?.template}`
-        if (app.settings.env === 'test' && messageObj) return 'Message fragment was prepared for discord'
+        if (app.settings.env === 'test') {
+          return 'Message fragment was prepared for discord'
+        }
 
-        await postToDiscord(username, formedMessage)
+        const { members, channel } = await setupDiscord(client)
+        if (!members || !channel)
+          throw new Error('Failure connecting to discord server or channel')
+        await postToDiscord(username, formedMessage, members, channel)
       }, StatusCodes.CREATED)
     )
 

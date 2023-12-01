@@ -9,6 +9,13 @@ type RowUpdate = Updateable<RowWithoutCode>
 export default (db: Database) => ({
   getAll: async () => db.selectFrom('sprints').selectAll().execute(),
 
+  getByCode: async (code: string) =>
+    db
+      .selectFrom('sprints')
+      .selectAll()
+      .where('code', '=', code)
+      .executeTakeFirst(),
+
   create: async (record: Row) =>
     db.insertInto('sprints').values(record).returning(keys).executeTakeFirst(),
 

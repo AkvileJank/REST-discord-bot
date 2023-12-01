@@ -22,6 +22,19 @@ describe('GET', () => {
   })
 })
 
+describe('GET /:code', () => {
+  it('should return a sprint by code', async () => {
+    sprints.loadSprints(db)
+
+    const { body } = await supertest(app).get('/sprints/WD-1.1').expect(200)
+    expect(body).toEqual(sprints.sprintsList[0])
+  })
+})
+it('should return error if sprint is not found', async () => {
+  sprints.loadSprints(db)
+  await supertest(app).get('/sprints/test').expect(404)
+})
+
 describe('POST', () => {
   it('should allow to create new sprint', async () => {
     const { body } = await supertest(app)
@@ -53,6 +66,13 @@ describe('PATCH /:code', () => {
       title: 'Updated first sprint title',
     })
   })
+  it('should return error if sprint is not found', async () => {
+    sprints.loadSprints(db)
+    await supertest(app).patch('/sprints/test').send({
+      title: 'Update sprint',
+    })
+    expect(404)
+  })
 })
 
 describe('DELETE /:code', () => {
@@ -65,5 +85,9 @@ describe('DELETE /:code', () => {
       code: 'WD-1.1',
       title: 'First sprint',
     })
+  })
+  it('should return error if sprint is not found', async () => {
+    sprints.loadSprints(db)
+    await supertest(app).delete('/sprints/test').expect(404)
   })
 })

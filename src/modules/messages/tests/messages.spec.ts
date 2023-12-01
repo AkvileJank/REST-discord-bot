@@ -96,7 +96,7 @@ describe('GET by sprint', () => {
 })
 
 describe('POST', () => {
-  it('should post a print new message', async () => {
+  it('should post a new message', async () => {
     loadSprints(db)
     loadTemplates(db)
     loadUsers(db)
@@ -110,5 +110,47 @@ describe('POST', () => {
       .send(messageTest)
       .expect(201)
     expect(body).toEqual('Message fragment was prepared for discord')
+  })
+
+  it('should throw error if provided user is not in database', async () => {
+    loadSprints(db)
+    loadTemplates(db)
+    loadUsers(db)
+
+    const messageTest = {
+      sprintCode: 'WD-1.1',
+      username: 'user',
+    }
+    await supertest(app).post('/messages').send(messageTest).expect(400)
+  })
+
+  it('should throw error if provided sprint code is not in database', async () => {
+    loadSprints(db)
+    loadTemplates(db)
+    loadUsers(db)
+
+    const messageTest = {
+      sprintCode: 'test',
+      username: 'test1',
+    }
+    await supertest(app).post('/messages').send(messageTest).expect(400)
+  })
+
+  it('should throw error if sprint and user are both not in database', async () => {
+    loadSprints(db)
+    loadTemplates(db)
+    loadUsers(db)
+    const messageTest = {
+      sprintCode: 'a',
+      username: 'b',
+    }
+    await supertest(app).post('/messages').send(messageTest).expect(400)
+  })
+
+  it('should throw error if no sprint code and username is provided', async () => {
+    loadSprints(db)
+    loadTemplates(db)
+    loadUsers(db)
+    await supertest(app).post('/messages').send().expect(400)
   })
 })

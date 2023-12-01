@@ -4,6 +4,7 @@ import { jsonRoute } from '@/utils/middleware'
 import buildRepository from './repository'
 import * as schema from './schema'
 import { StatusCodes } from 'http-status-codes'
+import { SprintNotFound } from './errors'
 
 export default (db: Database) => {
   const sprints = buildRepository(db)
@@ -25,15 +26,25 @@ export default (db: Database) => {
 
   router
     .route('/:code')
+    .get(
+      jsonRoute(async (req) => {
+        const code = schema.parseCode(req.params.code)
+        const record = await sprints.getByCode(code)
+        if (!record) {
+          throw new SprintNotFound()
+        }
+        return record
+      })
+    )
     .patch(
       jsonRoute(async (req) => {
         const code = schema.parseCode(req.params.code)
         const bodyPatch = schema.parseUpdatabale(req.body)
         const record = await sprints.update(code, bodyPatch)
 
-        // if (!record) {
-        //   throw new notFound();
-        // }
+        if (!record) {
+          throw new SprintNotFound()
+        }
         return record
       })
     )
@@ -41,6 +52,9 @@ export default (db: Database) => {
       jsonRoute(async (req) => {
         const code = schema.parseCode(req.params.code)
         const record = await sprints.delete(code)
+        if (!record) {
+          throw new SprintNotFound()
+        }
         return record
       })
     )
