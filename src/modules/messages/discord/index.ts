@@ -7,34 +7,30 @@ import {
 } from 'discord.js'
 import { config } from 'dotenv'
 import fetch from 'node-fetch'
-import NotFound from '@/utils/errors/NotFound'
 
 config()
 
 const TENOR_URL = `
 https://g.tenor.com/v2/search?q=celebrate&key=${process.env.TENOR_KEY}&limit=1&random=true`
 
-export async function setupDiscord(client: Client) {
+export async function setupDiscord(client: Client, user: string) {
   const guild = await client.guilds.fetch(process.env.SERVER_ID as string) // creates guild object(server)
-  const members = await guild.members.fetch()
   const channel = await client.channels.fetch(process.env.CHANNEL_ID as string)
+  const members = await guild.members.fetch()
+  const member = members.find((m) => m.user.username === user)
+  if (!member || !channel)
+    throw new Error('Failure connecting to discord server or channel')
 
-  return { members, channel }
+  return { member, channel }
 }
 
 export async function postToDiscord(
-  user: string,
   message: string,
-  members: Collection<string, GuildMember>,
+  member: GuildMember,
   channel: Channel
 ) {
-  const member = findUser(members, user)
-  if (member) {
-    postMessage(channel as TextChannel, member, message)
-    postGIF(channel as TextChannel)
-    return
-  }
-  throw new NotFound(`User ${user} was not found in discord server`)
+  postMessage(channel as TextChannel, member, message)
+  postGIF(channel as TextChannel)
 }
 
 async function postMessage(

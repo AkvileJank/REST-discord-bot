@@ -56,7 +56,7 @@ export function messagesRouting(db: Database, app: Express) {
         if (!messageAdded)
           throw new Error('Message could not be added to database')
 
-        // to get object with template content
+        // to get object with template content instead id
         const messageObj = await messages.getBySprintAndUser(
           sprintCode,
           username
@@ -68,10 +68,8 @@ export function messagesRouting(db: Database, app: Express) {
           return 'Message fragment was prepared for discord'
         }
 
-        const { members, channel } = await setupDiscord(client)
-        if (!members || !channel)
-          throw new Error('Failure connecting to discord server or channel')
-        await postToDiscord(username, formedMessage, members, channel)
+        const { member, channel } = await setupDiscord(client, username)
+        await postToDiscord(formedMessage, member, channel)
       }, StatusCodes.CREATED)
     )
 
