@@ -1,11 +1,12 @@
+/* eslint-disable consistent-return */
 import { Router } from 'express'
+import { StatusCodes } from 'http-status-codes'
+import type { Express } from 'express'
 import type { Database } from '@/database'
 import { jsonRoute } from '@/utils/middleware'
 import buildRepository from './repository'
 import randomTemplate from '../templates/utils'
 import { postToDiscord, setupDiscord } from './discord'
-import { StatusCodes } from 'http-status-codes'
-import type { Express } from 'express'
 import { validateReq } from './validation'
 import client from './discord/client'
 import NotFound from '@/utils/errors/NotFound'
@@ -18,19 +19,19 @@ export function messagesRouting(db: Database, app: Express) {
     .route('/')
     .get(
       jsonRoute(async (req) => {
-        const username = req.query.username
+        const { username } = req.query
 
-        const sprint = req.query.sprint
+        const { sprint } = req.query
 
         if (!username && !sprint) {
-          return await messages.getAll()
+          return messages.getAll()
         }
         if (username && typeof username === 'string') {
-          return await messages.getByUser(username)
+          return messages.getByUser(username)
         }
 
         if (sprint && typeof sprint === 'string') {
-          return await messages.getBySprint(sprint)
+          return messages.getBySprint(sprint)
         }
       })
     )
@@ -46,9 +47,9 @@ export function messagesRouting(db: Database, app: Express) {
         if (!template) throw new NotFound('Message template could not be found')
         // to add message to database
         const messageToDb = {
-          sprintCode: sprintCode,
+          sprintCode,
           templateId: template.id,
-          username: username,
+          username,
         }
 
         const messageAdded = await messages.create(messageToDb)

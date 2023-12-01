@@ -70,7 +70,7 @@ describe('PATCH /:id', () => {
       .expect(200)
 
     expect(body).toEqual({
-      id: id,
+      id,
       content: updatedTemplate,
     })
   })

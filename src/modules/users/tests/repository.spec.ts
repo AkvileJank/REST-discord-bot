@@ -16,7 +16,7 @@ describe('getUser', () => {
       user: 'test1',
     }
 
-    //populate database
+    // populate database
     await db.insertInto('users').values(testUser).execute()
 
     expect(await repository.getUser(testUser.user)).toEqual(testUser)

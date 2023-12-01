@@ -1,7 +1,7 @@
 import buildRepository from './repository'
 import type { Database } from '@/database'
 
-export default async function (db: Database) {
+export default async (db: Database) => {
   const templates = buildRepository(db)
   const allTemplates = await templates.getAll()
   return getRandomTemplate(allTemplates)

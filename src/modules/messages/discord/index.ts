@@ -1,4 +1,3 @@
-import NotFound from '@/utils/errors/NotFound'
 import {
   Client,
   Collection,
@@ -8,6 +7,7 @@ import {
 } from 'discord.js'
 import { config } from 'dotenv'
 import fetch from 'node-fetch'
+import NotFound from '@/utils/errors/NotFound'
 
 config()
 

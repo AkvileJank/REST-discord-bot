@@ -1,6 +1,6 @@
+import type { Updateable } from 'kysely'
 import type { Database, Sprints } from '@/database'
 import { keys } from './schema'
-import type { Updateable } from 'kysely'
 
 type Row = Sprints
 type RowWithoutCode = Omit<Row, 'code'>

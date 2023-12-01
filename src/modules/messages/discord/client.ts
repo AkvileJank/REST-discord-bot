@@ -5,6 +5,7 @@ const client = new Client({
 })
 
 client.once(Events.ClientReady, async (readyClient) => {
+  // eslint-disable-next-line no-console
   console.log(`Ready! Logged in as ${readyClient.user.tag}`)
 })
 

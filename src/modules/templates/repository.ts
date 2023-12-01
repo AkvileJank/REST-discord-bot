@@ -1,6 +1,6 @@
+import type { Insertable } from 'kysely'
 import type { Database, Templates } from '@/database'
 import { keys } from './schema'
-import type { Insertable } from 'kysely'
 
 type Row = Templates
 type RowWithoutId = Omit<Row, 'id'>

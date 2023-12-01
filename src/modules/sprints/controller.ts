@@ -1,9 +1,9 @@
 import { Router } from 'express'
+import { StatusCodes } from 'http-status-codes'
 import type { Database } from '@/database'
 import { jsonRoute } from '@/utils/middleware'
 import buildRepository from './repository'
 import * as schema from './schema'
-import { StatusCodes } from 'http-status-codes'
 import { SprintNotFound } from './errors'
 
 export default (db: Database) => {
@@ -12,11 +12,7 @@ export default (db: Database) => {
 
   router
     .route('/')
-    .get(
-      jsonRoute(async () => {
-        return await sprints.getAll()
-      })
-    )
+    .get(jsonRoute(async () => sprints.getAll()))
     .post(
       jsonRoute(async (req) => {
         const body = schema.parseInsertable(req.body)
