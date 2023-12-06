@@ -16,7 +16,10 @@ describe('POST', () => {
     const testUser = {
       user: 'test1',
     }
-    const { body } = await supertest(app).post('/users').send(testUser).expect(201)
+    const { body } = await supertest(app)
+      .post('/users')
+      .send(testUser)
+      .expect(201)
     expect(body).toEqual({
       user: 'test1',
     })

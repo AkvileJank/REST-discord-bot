@@ -7,6 +7,7 @@ import {
 } from 'discord.js'
 import { config } from 'dotenv'
 import fetch from 'node-fetch'
+import BadRequest from '@/utils/errors/BadRequest'
 
 config()
 
@@ -18,9 +19,10 @@ export async function setupDiscord(client: Client, user: string) {
   const channel = await client.channels.fetch(process.env.CHANNEL_ID as string)
   const members = await guild.members.fetch()
   const member = members.find((m) => m.user.username === user)
-  if (!member || !channel)
+  if (!channel)
     throw new Error('Failure connecting to discord server or channel')
-
+  if (!member)
+    throw new BadRequest('This user cannot be found on the discord server')
   return { member, channel }
 }
 

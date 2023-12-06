@@ -13,6 +13,7 @@ export default (db: Database) => ({
         'username',
         'templates.content as template',
         'sprints.title as sprint',
+        'createdAt',
       ])
       .execute(),
 
@@ -25,6 +26,7 @@ export default (db: Database) => ({
         'username',
         'templates.content as template',
         'sprints.title as sprint',
+        'createdAt',
       ])
       .where('username', '=', user)
       .execute(),
@@ -38,6 +40,7 @@ export default (db: Database) => ({
         'username',
         'templates.content as template',
         'sprints.title as sprint',
+        'createdAt',
       ])
       .where('sprintCode', '=', sprint)
       .execute(),
@@ -56,7 +59,7 @@ export default (db: Database) => ({
       .where('username', '=', user)
       .executeTakeFirst(),
 
-  create: async (message: Row) =>
+  create: async (message: Omit<Row, 'createdAt'>) =>
     db
       .insertInto('messages')
       .values(message)

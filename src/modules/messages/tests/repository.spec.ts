@@ -5,7 +5,6 @@ import { loadSprints } from '@/modules/sprints/tests/utils/loadSprints'
 import { loadTemplates } from '@/modules/templates/tests/utils/loadTemplates'
 import { loadUsers } from './utils/loadUsers'
 
-
 const db = await createTestDatabase()
 const repository = buildRepository(db)
 
@@ -26,8 +25,7 @@ describe('getAll', () => {
     messages.loadMessages(db)
 
     const foundMessages = await repository.getAll()
-    expect(foundMessages).toHaveLength(3)
-    expect(foundMessages).toEqual([
+    const expectedMessages = [
       {
         username: 'test1',
         template: 'Congratulations on your well-deserved success!',
@@ -45,7 +43,14 @@ describe('getAll', () => {
           'Heartfelt congratulations on reaching this significant milestone!',
         sprint: 'Third sprint',
       },
-    ])
+    ]
+
+    // Exclude createdAt from the assertion
+    const sanitizeObject = ({ createdAt, ...rest }) => rest
+    const sanitizedFoundMessages = foundMessages.map(sanitizeObject)
+    const sanitizedExpectedMessages = expectedMessages.map(sanitizeObject)
+
+    expect(sanitizedFoundMessages).toEqual(sanitizedExpectedMessages)
   })
 })
 
@@ -58,14 +63,22 @@ describe('getByUser', () => {
 
     const user = 'test1'
     const userMessages = await repository.getByUser(user)
-    expect(userMessages).toHaveLength(1)
-    expect(userMessages).toEqual([
+
+    const expectedUserMessages = [
       {
         username: 'test1',
         template: 'Congratulations on your well-deserved success!',
         sprint: 'First sprint',
       },
-    ])
+    ]
+
+    // Exclude createdAt from the assertion
+    const sanitizeObject = ({ createdAt, ...rest }) => rest
+    const sanitizedUserMessages = userMessages.map(sanitizeObject)
+    const sanitizedExpectedUserMessages =
+      expectedUserMessages.map(sanitizeObject)
+
+    expect(sanitizedUserMessages).toEqual(sanitizedExpectedUserMessages)
   })
 })
 
@@ -78,19 +91,27 @@ describe('getBySprint', () => {
 
     const sprint = 'WD-1.1'
     const sprintMessages = await repository.getBySprint(sprint)
-    expect(sprintMessages).toHaveLength(1)
-    expect(sprintMessages).toEqual([
+
+    const expectedSprintMessages = [
       {
         username: 'test1',
         template: 'Congratulations on your well-deserved success!',
         sprint: 'First sprint',
       },
-    ])
+    ]
+
+    // Exclude createdAt from the assertion
+    const sanitizeObject = ({ createdAt, ...rest }) => rest
+    const sanitizedSprintMessages = sprintMessages.map(sanitizeObject)
+    const sanitizedExpectedSprintMessages =
+      expectedSprintMessages.map(sanitizeObject)
+
+    expect(sanitizedSprintMessages).toEqual(sanitizedExpectedSprintMessages)
   })
 })
 
 describe('create', () => {
-  it('should add new message to database', async () => {
+  it('should add a new message to the database', async () => {
     loadSprints(db)
     loadTemplates(db)
     loadUsers(db)
@@ -103,6 +124,12 @@ describe('create', () => {
     }
 
     const addedMessage = await repository.create(message)
-    expect(addedMessage).toEqual(message)
+
+    // Exclude createdAt from the assertion
+    const { createdAt, ...restOfAddedMessage } = addedMessage
+    const { createdAt: expectedCreatedAt, ...restOfExpectedMessage } = message
+
+    // Check the remaining properties
+    expect(restOfAddedMessage).toEqual(restOfExpectedMessage)
   })
 })

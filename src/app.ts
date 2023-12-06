@@ -1,9 +1,10 @@
 import express from 'express'
+import seedTables from '@tests/seedDatabase'
 import jsonErrorHandler from './middleware/jsonErrors'
 import { type Database } from './database'
-import {templatesRouting} from './modules/templates/controller'
+import { templatesRouting } from './modules/templates/controller'
 import sprints from './modules/sprints/controller'
-import {messagesRouting} from './modules/messages/controller'
+import { messagesRouting } from './modules/messages/controller'
 import users from './modules/users/controller'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -20,6 +21,8 @@ export default function createApp(db: Database) {
   app.use('/users', users(db))
   app.use('/messages', messagesRouting(db, app))
 
+  // to load tables with some data
+  if (app.settings.env !== 'test') seedTables(db)
 
   return app
 }

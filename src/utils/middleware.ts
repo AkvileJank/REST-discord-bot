@@ -6,7 +6,6 @@ import {
 } from 'express'
 import { StatusCodes } from 'http-status-codes'
 
-
 type JsonHandler<T> = (
   req: Request,
   res: Response,

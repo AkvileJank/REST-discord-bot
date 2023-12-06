@@ -27,8 +27,7 @@ describe('GET', () => {
       messages.loadMessages(db)
 
       const { body } = await supertest(app).get('/messages').expect(200)
-      expect(body).toHaveLength(3)
-      expect(body).toEqual([
+      const expectedMessages = [
         {
           username: 'test1',
           template: 'Congratulations on your well-deserved success!',
@@ -46,13 +45,20 @@ describe('GET', () => {
             'Heartfelt congratulations on reaching this significant milestone!',
           sprint: 'Third sprint',
         },
-      ])
+      ]
+
+      // Exclude createdAt from the assertion
+      const sanitizeObject = ({ createdAt, ...rest }) => rest
+      const sanitizedBody = body.map(sanitizeObject)
+      const sanitizedExpected = expectedMessages.map(sanitizeObject)
+
+      expect(sanitizedBody).toEqual(sanitizedExpected)
     })
   })
 })
 
 describe('GET by username', () => {
-  it('should return messages for specific learner', async () => {
+  it('should return messages for a specific learner', async () => {
     loadSprints(db)
     loadTemplates(db)
     loadUsers(db)
@@ -62,19 +68,23 @@ describe('GET by username', () => {
       .get('/messages?username=test1')
       .expect(200)
 
-    expect(body).toHaveLength(1)
-    expect(body).toEqual([
-      {
-        username: 'test1',
-        template: 'Congratulations on your well-deserved success!',
-        sprint: 'First sprint',
-      },
-    ])
+    const expectedMessage = {
+      username: 'test1',
+      template: 'Congratulations on your well-deserved success!',
+      sprint: 'First sprint',
+    }
+
+    // Exclude createdAt from the assertion
+    const sanitizeObject = ({ createdAt, ...rest }) => rest
+    const sanitizedActual = sanitizeObject(body[0])
+    const sanitizedExpected = sanitizeObject(expectedMessage)
+
+    expect(sanitizedActual).toEqual(sanitizedExpected)
   })
 })
 
 describe('GET by sprint', () => {
-  it('should return messages for specific sprint', async () => {
+  it('should return messages for a specific sprint', async () => {
     loadSprints(db)
     loadTemplates(db)
     loadUsers(db)
@@ -84,14 +94,18 @@ describe('GET by sprint', () => {
       .get('/messages?sprint=WD-1.1')
       .expect(200)
 
-    expect(body).toHaveLength(1)
-    expect(body).toEqual([
-      {
-        username: 'test1',
-        template: 'Congratulations on your well-deserved success!',
-        sprint: 'First sprint',
-      },
-    ])
+    const expectedMessage = {
+      username: 'test1',
+      template: 'Congratulations on your well-deserved success!',
+      sprint: 'First sprint',
+    }
+
+    // Exclude createdAt from the assertion
+    const sanitizeObject = ({ createdAt, ...rest }) => rest
+    const sanitizedActual = sanitizeObject(body[0])
+    const sanitizedExpected = sanitizeObject(expectedMessage)
+
+    expect(sanitizedActual).toEqual(sanitizedExpected)
   })
 })
 

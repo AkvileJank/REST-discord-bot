@@ -1,17 +1,20 @@
-import type {Database} from '@/database'
+import type { Database } from '@/database'
 
-export const sprintsList = [{
+export const sprintsList = [
+  {
     code: 'WD-1.1',
-    title: 'First sprint'
-}, {
+    title: 'First sprint',
+  },
+  {
     code: 'WD-1.2',
-    title: 'Second sprint'
-},
-{
+    title: 'Second sprint',
+  },
+  {
     code: 'WD-1.3',
-    title: 'Third sprint'
-}]
+    title: 'Third sprint',
+  },
+]
 
 export function loadSprints(db: Database) {
-    db.insertInto('sprints').values(sprintsList).execute()
+  db.insertInto('sprints').values(sprintsList).execute()
 }

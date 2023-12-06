@@ -1,5 +1,5 @@
 import type { Database, Users } from '@/database'
-import {keys} from './schema'
+import { keys } from './schema'
 
 export default (db: Database) => ({
   getUser: async (username: string) =>
@@ -12,4 +12,3 @@ export default (db: Database) => ({
   addUser: async (user: Users) =>
     db.insertInto('users').values(user).returning(keys).executeTakeFirst(),
 })
-

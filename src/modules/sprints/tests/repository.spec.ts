@@ -66,8 +66,8 @@ describe('delete', () => {
     const deletedSprint = await repository.delete(code)
 
     expect(deletedSprint).toEqual({
-        code: 'WD-1.1',
-        title: 'First sprint',
+      code: 'WD-1.1',
+      title: 'First sprint',
     })
   })
 })
