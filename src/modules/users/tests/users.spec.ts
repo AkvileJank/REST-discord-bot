@@ -28,5 +28,5 @@ describe('POST', () => {
 
 it('should throw error if no user is provided', async () => {
   const testUser = {}
-  await supertest(app).post('/users').send(testUser).expect(500)
+  await supertest(app).post('/users').send(testUser).expect(400)
 })

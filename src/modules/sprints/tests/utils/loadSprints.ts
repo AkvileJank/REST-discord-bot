@@ -16,5 +16,5 @@ export const sprintsList = [
 ]
 
 export function loadSprints(db: Database) {
-  db.insertInto('sprints').values(sprintsList).execute()
+  return db.insertInto('sprints').values(sprintsList).execute()
 }

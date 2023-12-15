@@ -6,8 +6,8 @@ import {
   Channel,
 } from 'discord.js'
 import { config } from 'dotenv'
-import fetch from 'node-fetch'
 import BadRequest from '@/utils/errors/BadRequest'
+import fetchGIF from '../tenor'
 
 config()
 
@@ -48,16 +48,12 @@ async function postMessage(
   }
 }
 
-async function postGIF(channel: TextChannel) {
-  const response = await fetch(TENOR_URL)
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch GIF: ${response.status}`)
+export async function postGIF(channel: TextChannel) {
+  const gif = await fetchGIF(TENOR_URL)
+  if (!gif) {
+    throw new Error(`Failed to fetch GIF`)
   }
-
-  const jsonRes = await response.json()
-
-  await channel.send(jsonRes.results[0].url)
+  await channel.send(gif)
 }
 
 export function findUser(

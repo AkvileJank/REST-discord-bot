@@ -1,0 +1,15 @@
+1. Import seed tables not from tests +
+
+2. Don't pass app parameter to controller - pass string or boolean +
+
+3. Stop the operation if something throws error or fails
+
+4. move logic from templates utils to repository - it interacts with repository +
+
+5. have dotenv only in external modules
+
+6. move channel and discord server outside of setup discord function
+
+7. use discord cache
+
+8. separate discord and tenorAPI logic +

@@ -2,7 +2,7 @@
 
 ## Project description
 
-This is a discord bot REST API made with Node.js and Express.js, wrapping a SQLite database. It is created to deal with sending congratulatory messages on discord for learners, that have completed the learning part.
+This is a discord bot REST API made with Node.js and Express.js, wrapping a SQLite database. It was created to deal with sending congratulatory messages on discord for learners and managing congratulatory messages' templates, users, and sprint(learning part) information in the database. It was done as a learning project on Turing College.
 
 ## Sprints
 

@@ -111,7 +111,7 @@ describe('GET by sprint', () => {
 
 describe('POST', () => {
   it('should post a new message', async () => {
-    loadSprints(db)
+    await loadSprints(db)
     loadTemplates(db)
     loadUsers(db)
 

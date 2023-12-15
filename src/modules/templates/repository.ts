@@ -35,4 +35,14 @@ export default (db: Database) => ({
       .where('id', '=', id)
       .returning(keys)
       .executeTakeFirst(),
+
+  getRandom: async () => {
+    const allTemplates = await db.selectFrom('templates').selectAll().execute()
+    return getRandomTemplate(allTemplates)
+  },
 })
+
+function getRandomTemplate(allTemplates: Row[]) {
+  const randomIndex = Math.floor(Math.random() * allTemplates.length)
+  return allTemplates[randomIndex]
+}

@@ -1,26 +1,26 @@
 /* eslint-disable consistent-return */
 import { Router } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import type { Express } from 'express'
 import type { Database } from '@/database'
 import { jsonRoute } from '@/utils/middleware'
 import buildRepository from './repository'
 import randomTemplate from '../templates/utils'
+import templatesRepo from '../templates/repository'
 import { postToDiscord, setupDiscord } from './discord'
 import { validateReq } from './validation'
 import client from './discord/client'
 import NotFound from '@/utils/errors/NotFound'
 
-export function messagesRouting(db: Database, app: Express) {
+export function messagesRouting(db: Database, env: string) {
   const messages = buildRepository(db)
   const router = Router()
+  const templates = templatesRepo(db)
 
   router
     .route('/')
     .get(
       jsonRoute(async (req) => {
         const { username } = req.query
-
         const { sprint } = req.query
 
         if (!username && !sprint) {
@@ -43,12 +43,12 @@ export function messagesRouting(db: Database, app: Express) {
         const result = await validateReq(sprintCodeInput, usernameInput, db)
         const { username, sprintCode } = result
 
-        const template = await randomTemplate(db)
+        const template = await templates.getRandom()
         if (!template) throw new NotFound('Message template could not be found')
         // to add message to database
         const messageToDb = {
           sprintCode,
-          templateId: template.id,
+          templateId: template.id as unknown as number,
           username,
         }
 
@@ -64,7 +64,7 @@ export function messagesRouting(db: Database, app: Express) {
         if (!messageObj) throw new Error('Message could not be formed')
         const formedMessage = `has just completed ${messageObj.sprint}! ${messageObj.template}`
 
-        if (app.settings.env === 'test') {
+        if (env === 'test') {
           return 'Message fragment was prepared for discord'
         }
 
