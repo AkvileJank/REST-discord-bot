@@ -1,12 +1,21 @@
+
 # Discord bot with REST API
 
 ## Project description
 
-This is a discord bot REST API made with Node.js and Express.js, wrapping a SQLite database. It was created to deal with sending congratulatory messages on discord for learners and managing congratulatory messages' templates, users, and sprint(learning part) information in the database. It was done as a learning project on Turing College.
+This is a REST API discord bot made with Express.js and TypeScript, wrapping SQLite database. It sends congratulatory messages on discord for learners and manages messages'  text templates, users, and sprint information in the database. It was done as a learning project on Turing College.
 
-## Sprints
+## Tech stack
 
-Endpoints:
+- Node.js with Express.js and TypeScript for REST endpoints
+- SQLite database with Kysely as a query builder
+- Zod for schema declaration and validation
+- Vitest for unit and integration tests
+- ESLint and prettier for code cleanup
+
+## Endpoints
+
+### Sprints
 
 - GET /sprints
 
@@ -31,7 +40,7 @@ Endpoints:
 	}
 ```
 
-## Templates:
+### Templates:
 
 - GET /templates
 
@@ -55,7 +64,7 @@ Endpoints:
 	}
 ```
 
-## Users
+### Users
 
 - POST users/ with request body providing user:
 
@@ -65,7 +74,7 @@ Endpoints:
 	}
 ```
 
-## Messages
+### Messages
 
 - GET /messages
 
